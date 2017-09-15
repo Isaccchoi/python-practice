@@ -6,7 +6,7 @@ def fruits(color):
         "yellow": "banana",
         "green": "menon",
     }
-    if color_fruit.has_key(color):
+    if color in color_fruit:
         return color_fruit[color]
     else:
         return "I don't know"
