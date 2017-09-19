@@ -15,13 +15,14 @@ webtoon_yumi = "651673"
 
 def save_episode_list_to_file(webtoon_id, episode_list):
     filename = "{webtoon_id}_{first_episode_no}_{last_episode_no}.txt".format(
-        webtoon_id= webtoon_id,
-        first_episode_no = episode_list[0].no,
-        last_episode_no= episode_list[-1].no,
+        webtoon_id=webtoon_id,
+        first_episode_no=episode_list[0].no,
+        last_episode_no=episode_list[-1].no,
     )
     with open(filename, 'wt') as f:
         for epi in episode_list:
-            episode_info_string = (f"{epi.no}, {epi.image_url},{epi.title},{epi.rate},{epi.date}")
+            episode_info_string = (f"{epi.no}|{epi.image_url}|{epi.title}|{epi.rate}|{epi.date}")
+            # f.write(','.join(epi) + "\n")
             f.write(episode_info_string + "\n")
     """
     episode_list로 전달된 Episode의 리스트를
@@ -32,6 +33,20 @@ def save_episode_list_to_file(webtoon_id, episode_list):
     :param episode_list:
     :return:
     """
+
+
+def load_episode_list_from_file(path):
+
+    """
+    path에 해당 하는 file을 읽어 Episode리시트를 생성해 리턴
+
+    :param path:
+    :return:
+    """
+    # 리스트 형태로 담을 episode_list 정의
+
+    with open(path, 'rt') as f:
+        return [Episode._make(line.strip().split('|')) for line in f]
 
 
 # webtoon_id값을 파라미터로
@@ -70,3 +85,6 @@ def get_webtoon_episode_list(webtoon_id, page=1):
         p = Episode(no, image, title, rate, date)
         episode_list.append(p)
     return episode_list
+
+save_episode_list_to_file(651673, get_webtoon_episode_list(651673))
+load_episode_list_from_file("651673_250_241.txt")
