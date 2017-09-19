@@ -1,15 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
-from collections import namedtuple
+import collections
 
 webtoon_url = "http://comic.naver.com/webtoon/list.nhn?titleId=651673"
 
-# namedtuple 정의
-Episode = namedtuple('Episode', ['image_url', 'title', 'rate', 'date'])
-
-f = open('sample.txt', 'rt')
-source = f.read()
-soup = BeautifulSoup(source, 'lxml')
+source = requests.get(webtoon_url)
+soup = BeautifulSoup(source.text, 'lxml')
 # print(soup.prettify())
 
 # with open('sample.txt', 'wt') as f:
@@ -26,8 +22,8 @@ webtoon_table = soup.select_one('table.viewList')
 tr_list = webtoon_table.find_all('tr', recursive=False)
 
 # List 정의
-episode_list = list()
-
+episode_list = []
+Episode = collections.namedtuple('Episode', ['image_url', 'title', 'rate', 'date'])
 for tr in tr_list:
     image = tr.select_one('img')['src']
     # image_url = td_image['src']s
