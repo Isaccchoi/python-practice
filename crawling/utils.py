@@ -4,10 +4,10 @@ from bs4 import BeautifulSoup
 from collections import namedtuple
 
 Episode = namedtuple('Episode', ['no', 'image_url', 'title', 'rate', 'date'])
+base_url = "http://comic.naver.com/webtoon/list.nhn?"
 
 
 def get_webtoon_episode_list(webtoon_id, page=1):
-    base_url = "http://comic.naver.com/webtoon/list.nhn?"
     params = {
         'titleId': webtoon_id,
         'page': page,
@@ -44,7 +44,6 @@ def get_webtoon_episode_list(webtoon_id, page=1):
 
 
 def get_total_episode_count(webtoon_id):
-    base_url = "http://comic.naver.com/webtoon/list.nhn?"
     params = {
         'titleID': webtoon_id,
         'page': 1
@@ -58,3 +57,11 @@ def get_total_episode_count(webtoon_id):
     queryset = parse_qs(parse_result.query)
     no = queryset['no'][0]
     return no
+
+
+def get_last_episode_local(webtoon_id):
+    path = f"{webtoon_id}.txt"
+    with open(path, 'rt') as f:
+        return int(f.readline().split('|')[0])
+
+# get_last_episode_local(651673)

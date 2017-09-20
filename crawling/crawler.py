@@ -90,4 +90,4 @@ def get_webtoon_episode_list(webtoon_id, page=1):
 el = get_webtoon_episode_list(651673)
 pickle.dump(el, open('yumi_pickle.txt', 'wb'))
 # save_episode_list_to_file(651673, get_webtoon_episode_list(651673))
-# load_episode_list_from_file("651673_250_241.txt")
+# load_episode_list_from_file("651673.txt")
