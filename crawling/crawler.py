@@ -2,7 +2,7 @@ import pickle
 import requests
 from urllib.parse import urlparse, parse_qs
 from bs4 import BeautifulSoup
-from .utils import Episode
+from utils import Episode
 
 # namedtuple 정의
 
@@ -65,6 +65,9 @@ def get_webtoon_episode_list(webtoon_id, page=1):
     episode_list = list()
 
     for tr in tr_list:
+        td_list = tr.find_all('td')
+        if len(td_list) < 4:
+            continue
         image = tr.select_one('img')['src']
         # Episode 고유의 no
         url_episode = tr.a.get('href')

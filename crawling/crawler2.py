@@ -62,12 +62,12 @@ class NaverWebtoonCrawler:
             result = self.total_episode_count
             count = result
             page = (count // 10) + 1
-            while page > 0 & count > 0:
+            while page > 0 and count > 0:
                 new_episode_list = utils.get_webtoon_episode_list(self.webtoon_id, page)
                 if count < 10:
                     for epi in new_episode_list[:count]:
                         episode_info_string = f"{epi.no}|{epi.image_url}|{epi.title}|{epi.rate}|{epi.date}"
-                        self.episode_list.insert(0, episode_info_string)
+                        self.episode_list.append(episode_info_string)
                     page = 0
                     count = 0
                 else:
@@ -75,7 +75,7 @@ class NaverWebtoonCrawler:
                     for i in range(1, page + 1):
                         for epi in new_episode_list:
                             episode_info_string = f"{epi.no}|{epi.image_url}|{epi.title}|{epi.rate}|{epi.date}"
-                            self.episode_list.insert(0, episode_info_string)
+                            self.episode_list.append(episode_info_string)
                     count -= 10
                     page -= 1
             return result
@@ -92,12 +92,13 @@ class NaverWebtoonCrawler:
         # 한 페이지에 10개의 화가 들어가므로 10화당 1페이지를 추가해준다.
         # 리스트와 달리 홈페이지에서는 첫페이지가 1이므로 +1을 추가해준다.
         page = (count // 10) + 1
-        while page > 0 & count > 0:
+        while page > 0 and count > 0:
             new_episode_list = utils.get_webtoon_episode_list(self.webtoon_id, page)
             if count < 10:
                 for epi in new_episode_list[:count]:
                     episode_info_string = f"{epi.no}|{epi.image_url}|{epi.title}|{epi.rate}|{epi.date}"
-                    self.episode_list.insert(0, episode_info_string)
+                    print(episode_info_string)
+                    self.episode_list.append(episode_info_string)
                 page = 0
                 count = 0
             else:
@@ -105,7 +106,7 @@ class NaverWebtoonCrawler:
                 for i in range(1, page + 1):
                     for epi in new_episode_list:
                         episode_info_string = f"{epi.no}|{epi.image_url}|{epi.title}|{epi.rate}|{epi.date}"
-                        self.episode_list.insert(0, episode_info_string)
+                        self.episode_list.append(episode_info_string)
                 count -= 10
                 page -= 1
         return result
@@ -118,13 +119,15 @@ class NaverWebtoonCrawler:
         """
         if not path:
             try:
-                self.episode_list = pickle.load(f"db/{self.webtoon_id}.txt")
+                with open(f"./db/{self.webtoon_id}.txt", 'rb') as pickle_file:
+                    self.episode_list = pickle.load(pickle_file)
             except:
                 return False
             return True
         else:
             try:
-                self.episode_list = pickle.load(f"{path}")
+                with open(f"{path}", 'rb') as pickle_file:
+                    self.episode_list = pickle.load(pickle_file)
             except:
                 return False
             return True
@@ -137,17 +140,20 @@ class NaverWebtoonCrawler:
         """
         if not path:
             try:
-                pickle.dump(self.episode_list, open(f"db/{self.webtoon_id}.txt"), 'wb')
+                pickle.dump(self.episode_list, open(f"./db/{self.webtoon_id}.txt", 'wb'))
             except:
                 return False
             return True
         else:
             try:
-                pickle.dump(self.episode_list, open(f"{path}"), 'wb')
+                pickle.dump(self.episode_list, open(f"{path}", 'wb'))
             except:
                 return False
         return True
 
 
 nwc = NaverWebtoonCrawler(651673)
-print(nwc.total_episode_count)
+print(nwc.update_episode_list())
+print(nwc.episode_list)
+print(nwc.save())
+print(nwc.load())
