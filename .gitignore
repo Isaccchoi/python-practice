@@ -149,3 +149,4 @@ pip-selfcheck.json
 
 # custom
 /crawling/db/*
+*/.idea/*

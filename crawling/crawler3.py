@@ -29,6 +29,7 @@ class NaverWebtoonCrawler:
     def __init__(self, webtoon_id):
         self.webtoon_id = webtoon_id
         self.episode_list = list()
+        self.load(init=True)
 
     @property
     def total_episode_count(self):
@@ -101,17 +102,19 @@ class NaverWebtoonCrawler:
         self.episode_list = el
         return len(self.episode_list)
 
-    def load(self, path=None):
+    def load(self, path=None, init=False):
         """
         현재폴더를 기준으로 db/<webtoon_id>.txt 파일의 내용을 불러와
         pickle로 self.episode_list를 복원
         :return:
         """
         try:
-            path = f"./db/{self.webtoon_id}.txt"
+            if not path:
+                path = f"./db/{self.webtoon_id}.txt"
             self.episode_list = pickle.load(open(path, 'rb'))
         except FileNotFoundError:
-            print('파일이 없습니다')
+            if not init:
+                print('파일이 없습니다')
 
 
     def save(self, path=None):
@@ -130,10 +133,11 @@ class NaverWebtoonCrawler:
 
 
 nwc = NaverWebtoonCrawler(webtoon_p)
-print(nwc.up_to_date)
-print(nwc.get_last_page_episode_list())
-print(nwc.update_episode_list())
-print(nwc.save())
-nwc.episode_list = list()
-print(nwc.load())
 print(nwc.episode_list)
+# print(nwc.up_to_date)
+# print(nwc.get_last_page_episode_list())
+# print(nwc.update_episode_list())
+# print(nwc.save())
+# nwc.episode_list = list()
+# print(nwc.load())
+# print(nwc.episode_list)
