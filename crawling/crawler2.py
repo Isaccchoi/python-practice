@@ -44,12 +44,14 @@ class NaverWebtoonCrawler:
         현재 가지고있는 episode_list가 웹상의 최신 episode까지 가지고 있는지
         :return: boolean값
         """
-        last_episode_web = self.total_episode_count
-        last_episode_local = utils.get_last_episode_local(self.webtoon_id)
-        if last_episode_web == last_episode_local:
-            return True
-        else:
-            return False
+        # total_episode_count = 웹상에 올라와 있는 갯수
+        # total_episode_count = self.total_episode_count
+        # cur_episode_count = 로컬상에 있는 갯수
+        # cur_episode_count = utils.get_last_episode_local(self.webtoon_id)
+        # 로컬상과 웹상이 같으면 True, 다르면 False
+        # return total_episode_count == cur_episode_count
+        return self.total_episode_count == len(self.episode_list)
+
 
     def update_episode_list(self, force_update=False):
         """
@@ -64,24 +66,24 @@ class NaverWebtoonCrawler:
             page = (count // 10) + 1
             while page > 0 and count > 0:
                 new_episode_list = utils.get_webtoon_episode_list(self.webtoon_id, page)
-                if count < 10:
-                    for epi in new_episode_list[:count]:
-                        episode_info_string = f"{epi.no}|{epi.image_url}|{epi.title}|{epi.rate}|{epi.date}"
-                        self.episode_list.append(episode_info_string)
-                    page = 0
-                    count = 0
-                else:
-                    # range에 마지막 끝나는 숫자는 실제 원하는 숫자 +1을 해줘야 하므로 page에 1을 더해준다
-                    for i in range(1, page + 1):
+                for i in range(1, page + 1):
+                    if count % 10:
+                        for epi in new_episode_list[:count % 10]:
+                            episode_info_string = f"{epi.no}|{epi.image_url}|{epi.title}|{epi.rate}|{epi.date}"
+                            self.episode_list.append(episode_info_string)
+                            count = count % 10
+                            page -= 1
+                    else:
                         for epi in new_episode_list:
                             episode_info_string = f"{epi.no}|{epi.image_url}|{epi.title}|{epi.rate}|{epi.date}"
                             self.episode_list.append(episode_info_string)
-                    count -= 10
-                    page -= 1
+                        count -= 10
+                        page -= 1
             return result
 
         if self.up_to_date:
             return 0
+
         else:
             # last_episode_web은 웹상의 최신화의 번호(int)를 넣어준다
             last_episode_web = self.total_episode_count
@@ -94,21 +96,19 @@ class NaverWebtoonCrawler:
         page = (count // 10) + 1
         while page > 0 and count > 0:
             new_episode_list = utils.get_webtoon_episode_list(self.webtoon_id, page)
-            if count < 10:
-                for epi in new_episode_list[:count]:
-                    episode_info_string = f"{epi.no}|{epi.image_url}|{epi.title}|{epi.rate}|{epi.date}"
-                    print(episode_info_string)
-                    self.episode_list.append(episode_info_string)
-                page = 0
-                count = 0
-            else:
-                # range에 마지막 끝나는 숫자는 실제 원하는 숫자 +1을 해줘야 하므로 page에 1을 더해준다
-                for i in range(1, page + 1):
+            for i in range(1, page + 1):
+                if count % 10:
+                    for epi in new_episode_list[:count%10]:
+                        episode_info_string = f"{epi.no}|{epi.image_url}|{epi.title}|{epi.rate}|{epi.date}"
+                        self.episode_list.append(episode_info_string)
+                        count = count % 10
+                        page -= 1
+                else:
                     for epi in new_episode_list:
                         episode_info_string = f"{epi.no}|{epi.image_url}|{epi.title}|{epi.rate}|{epi.date}"
                         self.episode_list.append(episode_info_string)
-                count -= 10
-                page -= 1
+                    count -= 10
+                    page -= 1
         return result
 
     def load(self, path=None):
